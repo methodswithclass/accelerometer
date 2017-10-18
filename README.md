@@ -100,7 +100,14 @@ To implement the accelerometer for use, the following steps must be taken at min
 
 
 
-You are now moving an object on screen by tilting your device forward, backward, left, and right. Enjoy!
+You are now moving an object on screen by tilting your device forward, backward, left, and right.
+
+
+The working code for this small scale example can be found at https://github.com/methodswithclass/accelerometer-demo and a full scale live gaming site with this engine at its core (that demonstrates the calibration necessary) can be found at https://gravity.methodswithclass.com
+
+
+
+Enjoy!
 
 
 
