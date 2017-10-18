@@ -1,0 +1,24 @@
+{
+  "name": "accelerometer",
+  "authors": [
+    "Christopher Polito <chris@mwithc.io>"
+  ],
+  "description": "this is a software engine that translates the raw accelerometer data being output by your device into velocity and position data to be used to manipulate DOM objects",
+  "main": "",
+  "keywords": [
+    "accelerometer",
+    "gaming",
+    "physics",
+    "motion"
+  ],
+  "license": "MIT",
+  "homepage": "https://www.methodswithclass.com",
+  "private": false,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
