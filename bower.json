@@ -4,9 +4,16 @@
     "Christopher Polito <chris@mwithc.io>"
   ],
   "description": "this is a software engine that translates the raw accelerometer data being output by your device into velocity and position data to be used to manipulate DOM objects",
-  "main": "",
+  "main": "accelerometer.js",
   "keywords": [
     "accelerometer",
+    "acceleration",
+    "velocity",
+    "dynamics",
+    "math",
+    "calculation",
+    "numerical",
+    "integration",
     "gaming",
     "physics",
     "motion"
