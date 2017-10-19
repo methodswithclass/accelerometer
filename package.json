@@ -1,0 +1,32 @@
+{
+  "name": "accelerometer",
+  "version": "1.2.0",
+  "description": "This is an engine that converts the raw accelerometer data being output from the device into velocity and position data that can be applied to objects in the DOM for cool affects. Applications include gaming and UI controls.",
+  "main": "accelerometer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/methodswithclass/accelerometer.git"
+  },
+  "keywords": [
+    "accelerometer",
+    "motion",
+    "acceleration",
+    "velocity",
+    "position",
+    "dynamics",
+    "physics",
+    "gaming",
+    "numerical-integration",
+    "math",
+    "calculation"
+  ],
+  "author": "Christopher Polito <chris@mwithc.io>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/methodswithclass/accelerometer/issues"
+  },
+  "homepage": "https://github.com/methodswithclass/accelerometer#readme"
+}
