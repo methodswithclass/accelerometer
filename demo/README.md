@@ -2,6 +2,6 @@
 # Accelerometer Example
 
 
-This repo demonstrates how to make your device control a DOM object on the screen with the accelerometer.
+This repo demonstrates how control the motion of a DOM object on the screen space with the motion and tilting of your device in real space. It uses numerical intergration to calculate, in real time, the position of the DOM object from the continuous flow of raw acceleration data being output from the device. 
 
-It is generally a demonstration of how to import methodswithclass api modules into a project for use.
+
