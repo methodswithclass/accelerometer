@@ -768,6 +768,16 @@ var obj = {};
 })(obj);
 
 
-window.mcaccel = obj.mcaccel;
+try {
+	window.mcaccel = obj.mcaccel;
+}
+catch (e) {
+	console.log(e.message);
+}
 
-module.exports = obj.mcaccel;
+try {
+	module.exports = obj.mcaccel;
+}
+catch (e) {
+	console.log(e.message);
+}
