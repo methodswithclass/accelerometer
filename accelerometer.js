@@ -8,10 +8,10 @@ Accelerometer package
 */
 
 
+var obj = {};
 
 
-
-(function (window) {
+(function (obj) {
 
 	//private to this module, no public exposure, access with getters and setters
 	var factor = {
@@ -757,7 +757,7 @@ Accelerometer package
 
 	}
 
-	window.mcaccel = {
+	obj.mcaccel = {
 		utility:accelutility,
 		vector:vector,
 		object:object,
@@ -765,4 +765,9 @@ Accelerometer package
 	};
 
 
-})(window);
+})(obj);
+
+
+window.mcaccel = obj.mcaccel;
+
+module.exports = obj.mcaccel;
