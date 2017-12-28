@@ -768,6 +768,8 @@ var obj = {};
 })(obj);
 
 
+
+
 try {
 	window.mcaccel = obj.mcaccel;
 }
@@ -781,3 +783,6 @@ try {
 catch (e) {
 	console.log(e.message);
 }
+
+
+

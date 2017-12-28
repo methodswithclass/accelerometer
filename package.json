@@ -1,6 +1,6 @@
 {
   "name": "accelerometer",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "This is an engine that converts the raw accelerometer data being output from the device into velocity and position data that can be applied to objects in the DOM for cool affects. Applications include gaming and UI controls.",
   "main": "accelerometer.js",
   "scripts": {
