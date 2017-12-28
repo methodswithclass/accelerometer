@@ -3,7 +3,6 @@
   "authors": [
     "Christopher Polito <chris@mwithc.io>"
   ],
-  "verison":"1.2.1",
   "description": "This engine computes velocity and position data from the raw accelerometer data output by your device. With all three, you can cause DOM objects to react to the fluid motion of your device.",
   "main": "accelerometer.js",
   "keywords": [
