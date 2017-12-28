@@ -3,7 +3,8 @@
   "authors": [
     "Christopher Polito <chris@mwithc.io>"
   ],
-  "description": "this is a software engine that translates the raw accelerometer data being output by your device into velocity and position data to be used to manipulate DOM objects",
+  "verison":"1.2.1",
+  "description": "This engine computes velocity and position data from the raw accelerometer data output by your device. With all three, you can cause DOM objects to react to the fluid motion of your device.",
   "main": "accelerometer.js",
   "keywords": [
     "accelerometer",
