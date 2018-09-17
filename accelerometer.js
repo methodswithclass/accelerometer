@@ -116,7 +116,7 @@ var obj = {};
 				leading += "0";
 			}
 
-			console.log(leading + digit);
+			// console.log(leading + digit);
 
 			return leading + digit;
 		},
@@ -282,7 +282,7 @@ var obj = {};
 
         var createImage = function (arena, params) {
 
-            console.log("create image");
+            // console.log("create image");
 
             var obj = document.createElement("img");
             obj.style.position = "absolute";
@@ -301,7 +301,7 @@ var obj = {};
 
 		var createCircle = function (arena, params) {
 
-			console.log("create circle");
+			// console.log("create circle");
 
 			var obj = document.createElement("div");
 			obj.style.position = "absolute";
@@ -323,7 +323,7 @@ var obj = {};
 
 		var createSquare = function (arena, params) {
 
-			console.log("create square");
+			// console.log("create square");
 
             var obj = document.createElement("div");
 			obj.style.position = "absolute";
@@ -343,7 +343,7 @@ var obj = {};
 
 		var createCross = function (arena, params) {
 
-			console.log("create cross");
+			// console.log("create cross");
 
             var obj = document.createElement("div");
 			obj.style.position = "absolute";
@@ -384,7 +384,7 @@ var obj = {};
 
 		var setShape = function (shape, params, arena) {
 
-            console.log("set object shape to", shape);
+            // console.log("set object shape to", shape);
 
             container.innerHTML = "";
             container = null;
