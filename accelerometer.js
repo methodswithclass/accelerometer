@@ -226,7 +226,7 @@ var obj = {};
 			factorS:"session",
 			x:"i",
 			y:"j",
-			dist:25
+			dist:30
 		},
 
 		average:function (array) {
