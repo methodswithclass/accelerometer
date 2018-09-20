@@ -246,6 +246,11 @@ var obj = {};
 
 		},
 
+		setDist:function (dist) {
+
+			accelutility.const.dist = dist;
+		}
+
 		setFactor:function (type, _factor) {
 
 			factor[type] = Math.abs(_factor);
