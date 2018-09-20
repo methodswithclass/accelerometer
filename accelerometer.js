@@ -249,7 +249,7 @@ var obj = {};
 		setDist:function (dist) {
 
 			accelutility.const.dist = dist;
-		}
+		},
 
 		setFactor:function (type, _factor) {
 
