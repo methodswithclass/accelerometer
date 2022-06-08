@@ -182,7 +182,7 @@ class MovableThing {
     return this.container;
   };
 
-  setPosition = (pos: plainVector) => {
+  setPosition = (pos: Vector) => {
     this.relPos = pos;
 
     this.position = new Vector(this.relPos.x, this.relPos.y, this.relPos.time);
@@ -191,11 +191,11 @@ class MovableThing {
     this.container.style.top = util.truncate(this.position.y, 0) + 'px';
   };
 
-  setVelocity = (vel: plainVector) => {
+  setVelocity = (vel: Vector) => {
     this.velocity = vel;
   };
 
-  setAcceleration = (acc: plainVector) => {
+  setAcceleration = (acc: Vector) => {
     this.acceleration = acc;
   };
 
