@@ -58,10 +58,10 @@ class Accelerometer {
   }
 
   private startDemo = () => {
-    window.addEventListener('mousemove', (e) => {
+    window.addEventListener('touchmove', (e) => {
       let raw = {
-        x: e.offsetX - this.arena?.offsetWidth / 2 || 0,
-        y: e.offsetY - this.arena?.offsetHeight / 2 || 0,
+        x: e.touches[0].clientX - this.arena?.offsetWidth / 2 || 0,
+        y: e.touches[0].clientY - this.arena?.offsetHeight / 2 || 0,
       };
       this.demoInput.set(
         new Vector(
