@@ -1,7 +1,36 @@
 import mcaccel from '@methodswithclass/accelerometer';
 
+const requestDeviceMotion = (callback) => {
+  if (window.DeviceMotionEvent == null) {
+    callback(new Error('DeviceMotion is not supported.'));
+  } else if (typeof DeviceMotionEvent.requestPermission === 'function') {
+    DeviceMotionEvent.requestPermission().then(
+      (state) => {
+        if (state == 'granted') {
+          callback(null);
+        } else callback(new Error('Permission denied by user'));
+      },
+      (err) => {
+        callback(err);
+      }
+    );
+  } else {
+    // no need for permission
+    callback(null);
+  }
+};
+
+const firstClick = () => {
+  requestDeviceMotion((error) => {
+    if (error == null) {
+      window.removeEventListener('click', firstClick);
+      window.removeEventListener('touchend', firstClick);
+    }
+  });
+};
+
 const load = () => {
-  var demo = true; // test the accelerometer engine with mouse data instead of device accelerometer data
+  var demo = false; // test the accelerometer engine with mouse data instead of device accelerometer data
   //parameters for numerical integration process and general motion behavior
   var params = {
     interval: 2, //how often the accelerometer data is sampled in milliseconds
@@ -70,6 +99,10 @@ const load = () => {
 
   //start updating position of DOM element based on accelerometer data
   accel.start();
+
+  window.addEventListener('click', firstClick);
+  window.addEventListener('touchend', firstClick);
+  firstClick();
 };
 
 export default {
