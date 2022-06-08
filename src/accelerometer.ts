@@ -3,6 +3,7 @@ import g from './utils/accelutility';
 
 //public module, exposed to public api
 class Accelerometer {
+  private demo: boolean;
   private obj: any;
   private arena: any;
   private p: any;
@@ -22,6 +23,7 @@ class Accelerometer {
   private doesBounce: boolean;
 
   private $unfiltered: Vector = new Vector(0, 0, 0);
+  private demoInput: Vector = new Vector(0, 0, 0);
   private accel1: Vector = new Vector(0, 0, 0);
   private accel0: Vector = new Vector(0, 0, 0);
   private vel0: Vector = new Vector(0, 0, 0);
@@ -30,6 +32,7 @@ class Accelerometer {
   private pos1: Vector = new Vector(0, 0, 0);
   private $raw: plainVector = { x: 0, y: 0 };
   private startTime: number = 0;
+  private currentTime: number = 0;
 
   private timer: any;
   private running: boolean = false;
@@ -39,6 +42,7 @@ class Accelerometer {
 
   constructor(input: any) {
     this.name = input.id || 'none';
+    this.demo = input.demo || false;
     this.obj = input.object;
     this.arena = this.obj.el().parentElement;
     this.p = input.params || {};
@@ -52,6 +56,22 @@ class Accelerometer {
     this.gravity = this.p.gravity;
     this.doesBounce = this.p.bounce;
   }
+
+  private startDemo = () => {
+    window.addEventListener('mousemove', (e) => {
+      let raw = {
+        x: e.offsetX - this.arena?.offsetWidth / 2 || 0,
+        y: e.offsetY - this.arena?.offsetHeight / 2 || 0,
+      };
+      this.demoInput.set(
+        new Vector(
+          this.xDir * this.factor * raw.x,
+          this.yDir * this.factor * raw.y,
+          this.currentTime
+        )
+      );
+    });
+  };
 
   private getBounds = () => {
     this.bounds = {
@@ -168,7 +188,7 @@ class Accelerometer {
       },
     };
 
-    if (this.running) {
+    if (this.running && !this.demo) {
       if (this.gravity) {
         this.$unfiltered.set(
           new Vector(
@@ -195,15 +215,21 @@ class Accelerometer {
     console.log('start accel');
 
     this.updateParams(this.p);
-
     this.getBounds();
 
-    this.running = true;
+    if (this.demo) {
+      this.startDemo();
+    }
 
+    this.running = true;
     this.startTime = new Date().getTime();
+    this.currentTime = this.startTime;
 
     this.timer = setInterval(() => {
-      this.filterBucket[this.filterBucket.length] = this.$unfiltered;
+      this.currentTime = this.currentTime + this.interval;
+      this.filterBucket[this.filterBucket.length] = this.demo
+        ? this.demoInput
+        : this.$unfiltered;
 
       if (this.filterBucket.length == this.filterSize) {
         this.integrate(this.filterBucket);

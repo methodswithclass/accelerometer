@@ -44,23 +44,46 @@ const accelutility: utilType = {
   },
 
   setFactor: (type: string, factor: number) => {
-    accelutility.factor[typeof type] = Math.abs(factor);
-    console.log('utility set factor', type, factor);
+    if (type === 'global') {
+      accelutility.factor.global = Math.abs(factor);
+    } else if (type === 'session') {
+      accelutility.factor.session = Math.abs(factor);
+    }
+    console.log('utility set factor', type, accelutility.factor);
   },
 
   getFactor: (type?: string) => {
-    if (type) return Math.abs(accelutility.factor[typeof type]);
-    else
-      return Math.abs(accelutility.factor.global * accelutility.factor.session);
+    let factor;
+    if (type) {
+      factor =
+        type === 'session'
+          ? Math.abs(accelutility.factor.session)
+          : Math.abs(accelutility.factor.global);
+    } else {
+      factor = Math.abs(
+        accelutility.factor.global * accelutility.factor.session
+      );
+    }
+    return factor;
   },
 
   setAxis: (axis: string, value: number) => {
-    accelutility.axis[typeof axis] = value >= 0 ? 1 : -1;
+    if (axis === 'i') {
+      accelutility.axis.i = value >= 0 ? 1 : -1;
+    } else if (axis === 'j') {
+      accelutility.axis.j = value >= 0 ? 1 : -1;
+    }
     console.log('utility set axis', axis, value);
   },
 
   getAxis: (axis: string) => {
-    return accelutility.axis[typeof axis] >= 0 ? 1 : -1;
+    let _axis;
+    if (axis === 'i') {
+      _axis = accelutility.axis.i >= 0 ? 1 : -1;
+    } else if (axis === 'j') {
+      _axis = accelutility.axis.j >= 0 ? 1 : -1;
+    }
+    return _axis;
   },
 };
 

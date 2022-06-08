@@ -1,11 +1,12 @@
 import mcaccel from '@methodswithclass/accelerometer';
 
 const load = () => {
+  var demo = false; // test the accelerometer engine with mouse data instead of device accelerometer data
   //parameters for numerical integration process and general motion behavior
   var params = {
     interval: 2, //how often the accelerometer data is sampled in milliseconds
     filterSize: 3, //how many accelerometer data points are averaged during filtering process
-    factor: 0.8, //sensitivity factor per accelerometer instance
+    factor: demo ? 0.008 : 0.8, //sensitivity factor per accelerometer instance
     mu: 0.1, //friction coefficient
     damp: 0.4, //bounce dampening coeffiecient
     gravity: true, //does respond to tilting of device or only change in position of device (false)
@@ -44,6 +45,7 @@ const load = () => {
   //this is the numerical intetgration module called from accelerometer-1.js
   var accel = new mcaccel.accelerometer({
     id: 'accel', // name of accelerometer instance, can be anything
+    demo,
     object: obj, //this is the mcaccel wrapper object above, not the DOM object itself
     params: params, //inject accelerometer parameters
   });
