@@ -4,6 +4,7 @@ import g from './utils/accelutility';
 //public module, exposed to public api
 class Accelerometer {
   private demo: boolean;
+  private demoType: string;
   private obj: any;
   private arena: any;
   private p: any;
@@ -43,6 +44,7 @@ class Accelerometer {
   constructor(input: any) {
     this.name = input.id || 'none';
     this.demo = input.demo || false;
+    this.demoType = input.demoType;
     this.obj = input.object;
     this.arena = this.obj.el().parentElement;
     this.p = input.params || {};
@@ -58,19 +60,32 @@ class Accelerometer {
   }
 
   private startDemo = () => {
-    window.addEventListener('touchmove', (e) => {
-      let raw = {
-        x: e.touches[0].clientX - this.arena?.offsetWidth / 2 || 0,
-        y: e.touches[0].clientY - this.arena?.offsetHeight / 2 || 0,
-      };
-      this.demoInput.set(
-        new Vector(
+    window.addEventListener(
+      this.demoType === 'desktop' ? 'mousemove' : 'touchmove',
+      (e: any) => {
+        let event = {
+          x: this.demoType === 'desktop' ? e.offsetX : e.touches[0].clientX,
+          y: this.demoType === 'desktop' ? e.offsetY : e.touches[0].clientY,
+        };
+
+        let raw = {
+          x: event.x - (this.arena?.offsetWidth / 2 || 0),
+          y: event.y - (this.arena?.offsetHeight / 2 || 0),
+        };
+        console.log(
+          'debug demo',
           this.xDir * this.factor * raw.x,
-          this.yDir * this.factor * raw.y,
-          this.currentTime
-        )
-      );
-    });
+          this.yDir * this.factor * raw.y
+        );
+        this.demoInput.set(
+          new Vector(
+            this.xDir * this.factor * raw.x,
+            this.yDir * this.factor * raw.y,
+            this.currentTime
+          )
+        );
+      }
+    );
   };
 
   private getBounds = () => {
