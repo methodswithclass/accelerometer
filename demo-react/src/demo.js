@@ -76,7 +76,7 @@ const load = (index) => {
 
   const requestDeviceMotion = (callback) => {
     console.log('debug motion event', typeof DeviceMotionEvent);
-    if (!DeviceMotionEvent) {
+    if (window.DeviceMotionEvent == null) {
       callback(new Error('DeviceMotion is not supported.'));
     } else if (DeviceMotionEvent.requestPermission) {
       console.log('requested permission');
