@@ -92,15 +92,19 @@ const load = (index) => {
       );
     } else {
       // no need for permission
-      callback(new Error('no need for permission'));
+      console.log('no need for permission');
+      callback(null);
     }
   };
 
   const firstClick = () => {
     requestDeviceMotion((err) => {
-      window.removeEventListener('click', firstClick);
-      window.removeEventListener('touchend', firstClick);
-      console.log('error', err.message);
+      if (err === null) {
+        window.removeEventListener('click', firstClick);
+        window.removeEventListener('touchend', firstClick);
+      } else {
+        console.log('error', err?.message);
+      }
     });
   };
   window.addEventListener('click', firstClick);
