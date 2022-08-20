@@ -12,6 +12,10 @@
     "web-vitals": "^2.1.4",
     "@methodswithclass/accelerometer": ".."
   },
+  "engines": {
+    "node": "^14.0.0",
+    "npm": "^7.0.0"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
