@@ -7,6 +7,10 @@
     "dist",
     "demo_react"
   ],
+  "engines": {
+    "node": "^14.0.0",
+    "npm": "^7.0.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack",
