@@ -1,35 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import './Console.css';
+import { useConsole } from './console.service';
 
 const Console = (props) => {
   const { visible } = props;
-  const [history, setHistory] = useState([]);
-
-  const log = function (...args) {
-    let message = '';
-
-    Object.values(args).forEach((value) => {
-      message += ` ${value}`;
-    });
-    history.push(`${history.length}  ${message}`);
-    setHistory([...history]);
-  };
-
-  const attach = () => {
-    const oldLog = console.log;
-    console.log = function (...args) {
-      log.apply(log, args);
-      oldLog.apply(oldLog, args);
-    };
-
-    window.onerror = (msg, url, linenumber) => {
-      log('error', msg, url, linenumber);
-    };
-  };
-
-  useEffect(() => {
-    attach();
-  }, []);
+  const history = useConsole();
 
   return (
     <div className="console">

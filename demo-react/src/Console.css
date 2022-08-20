@@ -6,13 +6,12 @@
     padding: 0;
     margin: 0;
     bottom: 0;
-    overflow: hidden;
+    overflow-y: scroll;
 }
 
 .console-inner {
     position: absolute;
-    bottom: 0;
-    width: 100%;
+    width: 90%;
     left: 10%;
     height: auto;
 }
