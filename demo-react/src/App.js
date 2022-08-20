@@ -4,8 +4,12 @@ import demo from './demo';
 import Console from './Console';
 
 function App() {
+  const getIndex = () => {
+    return Math.floor(Math.random() * 100);
+  };
+
   useEffect(() => {
-    demo.load();
+    demo.load(getIndex());
   }, []);
 
   return (

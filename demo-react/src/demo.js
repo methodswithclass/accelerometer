@@ -1,6 +1,7 @@
 import mcaccel from '@methodswithclass/accelerometer';
 
-const load = () => {
+const load = (index) => {
+  var id = `accel${index}`;
   var demo = false; // test the accelerometer engine with mouse data instead of device accelerometer data
   var demoType = 'mobile';
   //parameters for numerical integration process and general motion behavior
@@ -38,14 +39,14 @@ const load = () => {
 
   //this is the wrapper object around the DOM element called from accelerometer-1.js
   var obj = new mcaccel.object({
-    id: 'object', // name of wrapper object for DOM element, can be anything
+    id: `object${index}`, // name of wrapper object for DOM element, can be anything
     arena: arena, //this is a dom element, it needs a parent element that will define the boundaries of it's motion
     params: objParams, //inject object parameters
   });
 
   //this is the numerical intetgration module called from accelerometer-1.js
   var accel = new mcaccel.accelerometer({
-    id: 'accel', // name of accelerometer instance, can be anything
+    id, // name of accelerometer instance, can be anything
     demo,
     demoType,
     object: obj, //this is the mcaccel wrapper object above, not the DOM object itself
@@ -53,13 +54,11 @@ const load = () => {
   });
 
   accel.getMotion(
-    'accel' /*name of accelerometer instance, must be the same as instance above*/,
-    function (id, pos, vel, acc) {
+    id /*name of accelerometer instance, must be the same as instance above*/,
+    (id, pos, vel, acc) => {
       //id in this scope is name of accelerometer instance
       //obj in this scope is the object wrapper instance of DOM element
-
-      console.log('debug accel', pos.x, pos.y);
-
+      // console.log('debug accel', id, pos.x, pos.y, acc.x, acc.y);
       obj.setPosition(pos);
       obj.setVelocity(vel);
       obj.setAcceleration(acc);
@@ -74,6 +73,42 @@ const load = () => {
 
   //start updating position of DOM element based on accelerometer data
   accel.start();
+
+  const requestDeviceMotion = (callback) => {
+    if (window.DeviceMotionEvent == null) {
+      callback(new Error('DeviceMotion is not supported.'));
+    } else if (DeviceMotionEvent.requestPermission) {
+      DeviceMotionEvent.requestPermission().then(
+        (state) => {
+          console.log('debug state', state);
+          if (state === 'granted') {
+            callback(null);
+          } else callback(new Error('Permission denied by user'));
+        },
+        (err) => {
+          callback(err);
+        }
+      );
+    } else {
+      // no need for permission
+      console.log('no need for permission');
+      callback(null);
+    }
+  };
+
+  const firstClick = (e) => {
+    requestDeviceMotion((err) => {
+      if (err == null) {
+        window.removeEventListener('click', firstClick);
+        window.removeEventListener('touchend', firstClick);
+      } else {
+        console.error('error', err);
+      }
+    });
+  };
+  window.addEventListener('click', firstClick);
+  window.addEventListener('touchend', firstClick);
+  firstClick();
 };
 
 export default {
