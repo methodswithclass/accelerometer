@@ -2,31 +2,34 @@
   "name": "@methodswithclass/accelerometer",
   "version": "1.0.0",
   "description": "This is an engine that converts the raw accelerometer data being output from the device into velocity and position data that can be applied to objects in the DOM for cool affects. Applications include gaming and UI controls.",
-  "main": "accelerometer.js",
+  "main": "dist/main.js",
+  "files": [
+    "dist",
+    "demo_react"
+  ],
+  "engines": {
+    "node": "^14.0.0",
+    "npm": "^7.0.0"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "demo": "cd demo-react && npm install && npm start"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/methodswithclass/accelerometer.git"
   },
-  "keywords": [
-    "accelerometer",
-    "motion",
-    "acceleration",
-    "velocity",
-    "position",
-    "dynamics",
-    "physics",
-    "gaming",
-    "numerical-integration",
-    "math",
-    "calculation"
-  ],
-  "author": "Christopher Polito <chris@mwithc.io>",
+  "author": "",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/methodswithclass/accelerometer/issues"
   },
-  "homepage": "https://github.com/methodswithclass/accelerometer#readme"
+  "homepage": "https://github.com/methodswithclass/accelerometer#readme",
+  "devDependencies": {
+    "ts-loader": "^9.3.0",
+    "typescript": "^4.7.3",
+    "webpack": "^5.73.0",
+    "webpack-cli": "^4.9.2"
+  }
 }
