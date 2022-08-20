@@ -75,9 +75,11 @@ const load = (index) => {
   accel.start();
 
   const requestDeviceMotion = (callback) => {
-    if (window.DeviceMotionEvent == null) {
+    console.log('debug motion event', DeviceMotionEvent);
+    if (!DeviceMotionEvent) {
       callback(new Error('DeviceMotion is not supported.'));
-    } else if (DeviceMotionEvent.requestPermission) {
+    } else if (DeviceMotionEvent?.requestPermission) {
+      console.log('requested permission');
       DeviceMotionEvent.requestPermission().then(
         (state) => {
           console.log('debug state', state);
@@ -91,8 +93,7 @@ const load = (index) => {
       );
     } else {
       // no need for permission
-      console.log('no need for permission');
-      callback(null);
+      callback(new Error('no need for permission'));
     }
   };
 
@@ -102,7 +103,7 @@ const load = (index) => {
         window.removeEventListener('click', firstClick);
         window.removeEventListener('touchend', firstClick);
       } else {
-        console.error('error', err);
+        console.log('error', err.message);
       }
     });
   };
