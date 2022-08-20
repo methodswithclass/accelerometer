@@ -75,14 +75,13 @@ const load = (index) => {
   accel.start();
 
   const requestDeviceMotion = (callback) => {
-    console.log('debug motion event', DeviceMotionEvent);
+    console.log('debug motion event', typeof DeviceMotionEvent);
     if (!DeviceMotionEvent) {
       callback(new Error('DeviceMotion is not supported.'));
     } else if (DeviceMotionEvent?.requestPermission) {
       console.log('requested permission');
       DeviceMotionEvent.requestPermission().then(
         (state) => {
-          console.log('debug state', state);
           if (state === 'granted') {
             callback(null);
           } else callback(new Error('Permission denied by user'));
@@ -97,14 +96,11 @@ const load = (index) => {
     }
   };
 
-  const firstClick = (e) => {
+  const firstClick = () => {
     requestDeviceMotion((err) => {
-      if (err == null) {
-        window.removeEventListener('click', firstClick);
-        window.removeEventListener('touchend', firstClick);
-      } else {
-        console.log('error', err.message);
-      }
+      window.removeEventListener('click', firstClick);
+      window.removeEventListener('touchend', firstClick);
+      console.log('error', err.message);
     });
   };
   window.addEventListener('click', firstClick);
