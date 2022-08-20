@@ -58,6 +58,8 @@ const load = () => {
       //id in this scope is name of accelerometer instance
       //obj in this scope is the object wrapper instance of DOM element
 
+      console.log('debug accel', pos.x, pos.y);
+
       obj.setPosition(pos);
       obj.setVelocity(vel);
       obj.setAcceleration(acc);
