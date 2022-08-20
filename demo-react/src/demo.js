@@ -1,8 +1,8 @@
 import mcaccel from '@methodswithclass/accelerometer';
 
 const load = () => {
-  var demo = true; // test the accelerometer engine with mouse data instead of device accelerometer data
-  var demoType = 'desktop';
+  var demo = false; // test the accelerometer engine with mouse data instead of device accelerometer data
+  var demoType = 'mobile';
   //parameters for numerical integration process and general motion behavior
   var params = {
     interval: 2, //how often the accelerometer data is sampled in milliseconds
