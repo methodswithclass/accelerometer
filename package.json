@@ -5,7 +5,7 @@
   "main": "dist/main.js",
   "files": [
     "dist",
-    "demo_react"
+    "demo-react"
   ],
   "engines": {
     "node": "^14.0.0",
