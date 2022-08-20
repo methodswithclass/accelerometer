@@ -15,7 +15,7 @@ function App() {
   return (
     <>
       <div className="arena" id="arena"></div>
-      <Console visible={true} />
+      <Console visible={false} />
     </>
   );
 }

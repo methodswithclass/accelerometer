@@ -7,19 +7,21 @@ const Console = (props) => {
   const history = useConsole();
 
   return (
-    <div className="console" id="console">
-      {visible && (
-        <div className="console-inner">
-          {history.map((item) => {
-            return (
-              <div key={item} className="item">
-                {item}
-              </div>
-            );
-          })}
+    <>
+      {visible ? (
+        <div className="console" id="console">
+          <div className="console-inner">
+            {history.map((item) => {
+              return (
+                <div key={item} className="item">
+                  {item}
+                </div>
+              );
+            })}
+          </div>
         </div>
-      )}
-    </div>
+      ) : null}
+    </>
   );
 };
 
