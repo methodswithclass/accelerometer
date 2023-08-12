@@ -44,7 +44,7 @@ Accelerometer manages several instances by id, subsequent calls return original
 const accel = Accelerometer({
 	id: "accel", // name of accelerometer instance
 	arena: "arenaId", // element id to space to move within
-	object: "objectId", //element id of object to be moved, must be position: absolute
+	object: "objectId", //element id of object to be moved
 	params, //inject accelerometer parameters
 	overrideValidate: false // not all devices have accelerometers, this flag forces the validator to return 'valid', for local development
 });

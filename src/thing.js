@@ -23,6 +23,7 @@ const Thing = function (props) {
 
   const getObject = () => {
     const container = document.getElementById(object) || { style: {} };
+    container.style.position = 'absolute';
     container.style.zIndex = 1000;
     self.width = container.offsetWidth || 10;
     self.height = container.offsetHeight || 10;
