@@ -6,7 +6,7 @@
     padding: 0;
     margin: 0;
     bottom: 0;
-    overflow-y: scroll;
+    overflow: hidden; 
 }
 
 .console-inner {
@@ -14,6 +14,7 @@
     width: 90%;
     left: 10%;
     height: auto;
+    bottom:0;
 }
 
 .item {

@@ -1,21 +1,33 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
-import demo from './demo';
-import Console from './Console';
+import { load } from './app/demo';
+import Console from './app/console/Console';
 
 function App() {
-  const getIndex = () => {
-    return Math.floor(Math.random() * 100);
-  };
-
+  const [isValid, setValid] = useState('unchecked');
   useEffect(() => {
-    demo.load(getIndex());
+    const id = 'global';
+    const accel = load({ id, arena: 'arena', object: 'object' });
+    accel.validate().then((valid) => {
+      setValid(valid);
+    });
+    return () => {
+      accel?.stop();
+    };
   }, []);
 
   return (
     <>
-      <div className="arena" id="arena"></div>
-      <Console visible={false} />
+      <div className="arena" id="arena">
+        <div
+          className={`object ${isValid !== 'valid' ? 'hidden' : ''}`}
+          id="object"
+        ></div>
+      </div>
+      {isValid === 'invalid' ? (
+        <div>This device is not supported. Use on a mobile device.</div>
+      ) : null}
+      <Console visible={isValid === 'valid'} />
     </>
   );
 }

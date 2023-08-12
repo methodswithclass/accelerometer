@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 
+const oldLog = console.log;
+
 export const useConsole = () => {
   const [history, setHistory] = useState([]);
 
@@ -14,7 +16,6 @@ export const useConsole = () => {
   };
 
   const attach = () => {
-    const oldLog = console.log;
     console.log = function (...args) {
       log.apply(log, args);
       oldLog.apply(oldLog, args);

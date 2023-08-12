@@ -1,113 +1,62 @@
-
 # Accelerometer
 
-
-TLDR 
-
-This package translates the acceleromter data being output by your device into velocity and position data so that objects in the DOM can be manipulated accoringly for cool affects.
+This package translates the acceleromter data from your device into velocity and position data so that objects in the DOM can be manipulated accoringly.
 Applications inlcude gaming, user interface controls, and more.
 
+# Usage
 
-#######
+This package is an engine that numerically integrates the velocity and position, in real time, from the raw accelerometer data from the device.
 
-This package is an engine that calculates by numerical integration the velocity and susequently the position, in real time, from the raw accelerometer data being automatically output from your device which is available through your browser.
+`npm install @methodswithclass/accelerometer`
 
-The raw data will need to be scale factored significantly for object motion of DOM objects to match the scale of the device size. To properly implement this package, calibration software must be written to determine appropriate scale factors and adjust for the coordinate system of the user's device. It is possible that this software I have written for this purpose may be open sourced and available in the future.
+`import Accelerometer, { ValidStates } from @methodswithclass/accelerometer`
 
+these values are returned from accel.validate()
 
-When this package is installed, the mcaccel object is available on the window space. the mcaccel has the following objects:
+```
+ValidStates = {
+	valid: 'valid',
+	invalid: 'invalid',
+	unchecked: 'unchecked',
+}
+```
 
-	mcaccel = {
-		utility,
-		vector,
-		object,
-		accelerometer
-	}
+parameters for numerical integration process and general motion behavior, defaults are shown
 
+```
+const params = {
+	interval: 2, //acceleromter interval in milliseconds
+	filterSize: 3, //sampling/smoothing size
+	mu: 0.1, //friction
+	damp: 0.4, //bounce dampening
+	gravity: true, //whether the object responds to tilting of device (true) or only change in position of device (false)
+	bounce: true, //whether the object bounces off walls (true), or sticks to the wall (false)
+	timout: 10, // motion timeout with no activity, in seconds
+	xDir: 1, //horizonal flip
+	yDir: 1, //vertical flip
+	factor: 0.008, //sensitivity factor (speed of object)
+}
+```
 
-To implement the accelerometer for use, the following steps must be taken at minimum, some values are hard coded. It is hightly recommended that you write software to determine these values because they will vary across devices and sometimes the motion affect will not be as expected.
+Accelerometer manages several instances by id, subsequent calls return original
 
+```
+const accel = Accelerometer({
+	id: "accel", // name of accelerometer instance
+	arena: "arenaId", // element id to space to move within
+	object: "objectId", //element id of object to be moved, must be position: absolute
+	params, //inject accelerometer parameters
+	overrideValidate: false // not all devices have accelerometers, this flag forces the validator to return 'valid', for local development
+});
 
-	//parameters for numerical integration process and general motion behavior
-	var params = {
-		interval:2, //how often the accelerometer data is sampled in milliseconds
-		filterSize:3, //how many accelerometer data points are averaged during filtering process
-		factor:0.8, //sensitivity factor per accelerometer instance
-		mu:0.1, //friction coefficient
-		damp:0.4, //bounce dampening coeffiecient
-		gravity:true, //does respond to tilting of device or only change in position of device (false)
-		bounce:true //does bounce off walls, or sticks when it hits a boundary (false)
-	}
+accel.calibrate({ xDir, yDir, factor}); // this is run by default
 
-	//object parameters, unless otherwise defined with html
-	var objParams = {
-		shape:"circle", //"square" and "cross" are other built in shapes, define your own shape with html (as children of DOM element) and exclude this value
-		size:200, //in px
-		color:"black" //color of object
-	}
+accel.validate(); // returns a promise with the device validation status, requests permission if necessary, this is run by default
 
-	var g = mcaccel.utility;
+accel.start(); //start updating position of DOM element based on accelerometer data
 
-	/*
-	these are global values above and beyond other set values
-	they must be set per session on different devices through some calibration means 
-	defaults are all positive one which may not give desired motion results
-	*/
-	g.setFactor(g.const.factorG, 0.01);
-	g.setAxis(g.const.x, -1);
-	g.setAxis(g.const.y, 1);
+accel.stop(); // stop updating position, reset
 
+accel.reset(); // returns object to initial position
 
-	//this element is going to be attached to the accelerometer data coming from the device and respond to changes
-	var object = document.getElementById("object");
-	var arena = document.getElementById("arena");
-
-
-	//this is the wrapper object around the DOM element called from accelerometer-1.js
-	var obj = new mcaccel.object({
-		id:"object", // name of wrapper object for DOM element, can be anything
-		arena:arena, //this is a dom element, it needs a parent element that will define the boundaries of it's motion
-		params:objParams //inject object parameters
-	});
-		
-	//this is the numerical intetgration module called from accelerometer-1.js
-	var accel = new mcaccel.accelerometer({
-		id:"accel", // name of accelerometer instance, can be anything
-		object:obj, //this is the mcaccel wrapper object above, not the DOM object itself
-		params:params //inject accelerometer parameters
-	});
-
-	accel.getMotion("accel" /*name of accelerometer instance, must be the same as instance above*/, function (id, pos, vel, acc) {
-
-		//id in this scope is name of accelerometer instance
-		//obj in this scope is the object wrapper instance of DOM element
-
-		obj.setPosition(pos);
-		obj.setVelocity(vel);
-		obj.setAcceleration(acc);
-
-	});
-
-	//attach accelerometer callback to device motion window function, this is where the rubber meets road
-	window.ondevicemotion = accel.motion;
-
-	
-	//reset accel instance to zero position (center of parent element), velocity, and acceleration 
-	accel.reset();
-
-	//start updating position of DOM element based on accelerometer data
-	accel.start();
-
-
-
-You are now moving an object on screen by tilting your device forward, backward, left, and right.
-
-
-The working code for this small scale example can be found in the demo directory of this repo. A full scale live gaming platform with this engine at its core (that also demonstrates the calibration that is necessary) can be found at https://gravity.methodswithclass.com and it's source code can be found at https://github.com/methodswithclass/gravity-site
-
-
-
-Enjoy!
-
-
-
+```
