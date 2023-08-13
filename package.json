@@ -1,6 +1,6 @@
 {
   "name": "@methodswithclass/accelerometer",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "This is an engine that converts the raw accelerometer data being output from the device into velocity and position data that can be applied to objects in the DOM for cool affects. Applications include gaming and UI controls.",
   "main": "dist/main.js",
   "files": [
