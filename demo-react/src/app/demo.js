@@ -37,7 +37,7 @@ const load = (input) => {
 
   console.log('validation statuses', isValid, isInValid, isUnchecked);
 
-  accel.start(); //start updating position of DOM element based on accelerometer data
+  // accel.start(); //start updating position of DOM element based on accelerometer data
 
   // accel.stop(); //stop updating position, reset
 

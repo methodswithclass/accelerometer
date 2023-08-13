@@ -10,6 +10,7 @@ function App() {
     const accel = load({ id, arena: 'arena', object: 'object' });
     accel.validate().then((valid) => {
       setValid(valid);
+      accel.start();
     });
     return () => {
       accel?.stop();
