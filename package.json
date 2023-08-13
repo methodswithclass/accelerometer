@@ -13,7 +13,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack",
-    "demo": "npm run build && cd demo-react && npm install && npm start"
+    "start": "cd demo-react && npm install && npm start"
   },
   "author": "",
   "license": "ISC",
