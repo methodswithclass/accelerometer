@@ -1,7 +1,7 @@
 {
   "name": "@methodswithclass/accelerometer",
-  "version": "3.1.0",
-  "description": "This is an engine that converts the raw accelerometer data being output from the device into velocity and position data that can be applied to objects in the DOM for cool affects. Applications include gaming and UI controls.",
+  "version": "3.1.1",
+  "description": "An engine that reads the accelerometer data from the device, calculates position, and applies it to a DOM element.",
   "main": "dist/main.js",
   "files": [
     "dist"
@@ -15,6 +15,14 @@
     "build": "webpack",
     "demo": "npm run build && cd demo-react && npm install && npm start"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/methodswithclass/accelerometer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/methodswithclass/accelerometer/issues"
+  },
+  "homepage": "https://github.com/methodswithclass/accelerometer#readme",
   "author": "",
   "license": "ISC",
   "devDependencies": {
