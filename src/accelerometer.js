@@ -1,5 +1,5 @@
 import Thing from './thing';
-import { Vector, averageVector, truncate, delay } from './utils/utils';
+import { Vector, averageVector, delay } from './utils/utils';
 
 export const ValidStatus = {
   valid: 'valid',
@@ -55,11 +55,11 @@ const Accelerometer = function (props = {}) {
   const {
     mu = 0.1,
     bounce: doesBounce = true,
-    damp = 0.4,
+    damp = 0.6,
     filterSize = 3,
     gravity = true,
     interval = 2,
-    timeout = 2,
+    timeout = 10,
     factor: globalFactor = 0.008,
     xDir: xAxis = 1,
     yDir: yAxis = 1,
@@ -67,15 +67,18 @@ const Accelerometer = function (props = {}) {
 
   let timer;
   let filterBucket = [];
-  let unfiltered = new Vector();
   let timeoutBucket = [];
   let timeoutCheck = {};
-  let pos0 = new Vector();
-  let vel0 = new Vector();
-  let accel0 = new Vector();
-  let pos1 = new Vector();
-  let vel1 = new Vector();
-  let accel1 = new Vector();
+  let prevTimeoutKey = null;
+  const unfiltered = new Vector();
+  const averagedAccel = new Vector();
+  const pos0 = new Vector();
+  const vel0 = new Vector();
+  const accel0 = new Vector();
+  const pos1 = new Vector();
+  const vel1 = new Vector();
+  const accel1 = new Vector();
+  const minVel = Math.pow(10, -3);
   let startTime = 0;
   let currentTime = 0;
   let previousTime = 0;
@@ -145,32 +148,33 @@ const Accelerometer = function (props = {}) {
     );
   };
 
-  const hasTimedOut = () => {
-    const averagedAccel = new Vector();
-    timeoutBucket.push(unfiltered);
-    if (timeoutBucket.length < 10) {
+  const hasTimedOut = (current) => {
+    timeoutBucket.push(unfiltered.new());
+    if (timeoutBucket.length < filterSize) {
       return false;
     }
 
-    averagedAccel.set(
-      averageVector(timeoutBucket, (accum, item) => {
-        const { x, y } = accum;
-        return { x: x + truncate(item.x, 8), y: y + truncate(item.y, 6) };
-      })
-    );
+    averagedAccel.set(averageVector(timeoutBucket));
     timeoutBucket = [];
-    const key = averagedAccel.print();
+    const key = averagedAccel.print({ decimal: 4 });
     if (!timeoutCheck[key]) {
       timeoutCheck[key] = [];
     }
-    timeoutCheck[key].push(true);
+    timeoutCheck[key].push(current);
+
+    if (prevTimeoutKey && key !== prevTimeoutKey) {
+      delete timeoutCheck[prevTimeoutKey];
+    }
+
+    prevTimeoutKey = key;
 
     const result = Object.values(timeoutCheck).some((items) => {
-      return items?.length > 100 * timeout;
+      return items?.[items?.length - 1] - items?.[0] > 1000 * timeout;
     });
 
     if (!running || result) {
       timeoutCheck = {};
+      averagedAccel.set({ x: 0, y: 0 });
       return true;
     }
 
@@ -180,32 +184,36 @@ const Accelerometer = function (props = {}) {
   const bounce = () => {
     const wallStatus = object?.hasHitWall(pos1);
 
-    const minVel = 12 * (Math.abs(accel1.y) + Math.abs(accel1.x));
-
     if (wallStatus?.x) {
-      pos1.x = wallStatus.xmax;
-      vel1.x = -(1 - damp) * vel1.x;
-      if ((Math.abs(vel1.x) < minVel && gravity) || !doesBounce) {
-        vel1.x = 0;
+      pos1.set({ x: wallStatus.xmax });
+      vel1.set({ x: -damp * vel1.x });
+      if (
+        (Math.abs(vel1.x) < minVel / Math.sqrt(2) && gravity) ||
+        !doesBounce
+      ) {
+        vel1.set({ x: 0 });
       }
     }
 
     if (wallStatus?.y) {
-      pos1.y = wallStatus.ymax;
-      vel1.y = -(1 - damp) * vel1.y;
-      if ((Math.abs(vel1.y) < minVel && gravity) || !doesBounce) {
-        vel1.y = 0;
+      pos1.set({ y: wallStatus.ymax });
+      vel1.set({ y: -damp * vel1.y });
+      if (
+        (Math.abs(vel1.y) < minVel / Math.sqrt(2) && gravity) ||
+        !doesBounce
+      ) {
+        vel1.set({ y: 0 });
       }
     }
   };
 
   const friction = () => {
-    if (accel1.len() === 0) {
-      vel1 = vel1.multiply(1 - mu);
+    if (accel1.len() < threshold) {
+      vel1.set(vel1.multiply(1 - mu));
     }
   };
 
-  const integrate = (accelArray, currentTime) => {
+  const integrate = (accelArray, current) => {
     if (!running) {
       return;
     }
@@ -216,7 +224,7 @@ const Accelerometer = function (props = {}) {
       accel1.set(new Vector());
     }
 
-    const timeInterval = currentTime - previousTime;
+    const timeInterval = current - previousTime;
 
     vel1.set(
       vel0
@@ -243,12 +251,12 @@ const Accelerometer = function (props = {}) {
   const update = () => {
     currentTime = new Date().getTime();
 
-    if (hasTimedOut()) {
+    if (hasTimedOut(currentTime)) {
       self.stop();
       return;
     }
 
-    filterBucket.push(unfiltered);
+    filterBucket.push(unfiltered.new());
 
     if (filterBucket.length === filterSize) {
       integrate(filterBucket, currentTime);
@@ -270,11 +278,11 @@ const Accelerometer = function (props = {}) {
   };
 
   self.calibrate = (params) => {
-    const { xDir: xAxis, yDir: yAxis, factor: globalFactor } = params;
+    const { xDir: _xDir, yDir: _yDir, factor: _factor } = params;
 
-    xDir = xAxis ? xAxis : xDir;
-    yDir = yAxis ? yAxis : yDir;
-    factor = globalFactor > 0 ? globalFactor : factor;
+    xDir = _xDir ? _xDir : xDir;
+    yDir = _yDir ? _yDir : yDir;
+    factor = _factor > 0 ? _factor : factor;
     threshold = factor * factor;
   };
 
@@ -314,10 +322,10 @@ const Accelerometer = function (props = {}) {
     timeoutBucket = [];
     timeoutCheck = {};
 
-    unfiltered = new Vector();
-    accel0 = new Vector();
-    vel0 = new Vector();
-    pos0 = new Vector();
+    unfiltered.set({ x: 0, y: 0 });
+    accel0.set({ x: 0, y: 0 });
+    vel0.set({ x: 0, y: 0 });
+    pos0.set({ x: 0, y: 0 });
     startTime = 0;
 
     handleEvent({ detail: { pos: pos0, vel: vel0, accel: accel0 } });

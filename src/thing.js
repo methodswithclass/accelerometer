@@ -58,13 +58,9 @@ const Thing = function (props) {
     self.acceleration.set(accel);
   };
 
-  self.hasHitWall = (_pos) => {
+  self.hasHitWall = (pos) => {
     getBounds();
 
-    const pos = {
-      x: _pos.x,
-      y: _pos.y,
-    };
     const sideX = pos.x / Math.abs(pos.x);
     const sideY = pos.y / Math.abs(pos.y);
 

@@ -13,7 +13,7 @@ const load = (input) => {
     damp: 0.4, //bounce dampening
     gravity: true, //whether the object responds to tilting of device (true) or only change in position of device (false)
     bounce: true, //whether the object bounces off walls (true), or sticks to the wall (false)
-    timout: 10, // motion timeout with no activity, in seconds
+    timeout: 10, // motion timeout with no activity, in approximate seconds
     xDir: 1, //horizonal flip
     yDir: 1, //vertical flip
     factor: 0.008, //sensitivity factor (speed of object)

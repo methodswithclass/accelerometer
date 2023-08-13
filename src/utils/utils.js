@@ -1,3 +1,23 @@
+export const isNumber = (num) => {
+  return num === 0 || (typeof num !== 'undefined' && !Number.isNaN(num));
+};
+
+export const truncate = (number, decimal) => {
+  if (!isNumber(decimal)) {
+    return number;
+  }
+
+  if (decimal === 0) {
+    return Math.floor(number);
+  }
+  const stringValue = `${number}`;
+  const [integer, fraction = '0'] = stringValue.split('.');
+  const truncatedString =
+    fraction.length >= decimal ? fraction.slice(0, decimal) : fraction;
+  const truncated = Number.parseFloat(`${integer}.${truncatedString}`);
+  return truncated;
+};
+
 export const Vector = function (props = {}) {
   const self = this;
 
@@ -42,15 +62,20 @@ export const Vector = function (props = {}) {
   };
 
   self.set = (vector) => {
-    self.x = !Number.isNaN(vector?.x) ? vector.x : self.x;
-    self.y = !Number.isNaN(vector?.y) ? vector.y : self.y;
-    self.time = !Number.isNaN(vector?.time) ? vector.time : self.time;
+    self.x = isNumber(vector?.x) ? vector.x : self.x;
+    self.y = isNumber(vector?.y) ? vector.y : self.y;
+    self.time = isNumber(vector?.time) ? vector.time : self.time;
   };
 
-  self.print = (prefix) => {
-    return `${prefix ? `${prefix}: ` : ''}x:${self.x} y:${self.y} t:${
-      self.time
-    }`;
+  self.new = () => {
+    return new Vector({ x: self.x, y: self.y });
+  };
+
+  self.print = ({ prefix, decimal } = {}) => {
+    return `${prefix ? `${prefix}: ` : ''}x:${truncate(
+      self.x,
+      decimal
+    )} y:${truncate(self.y, decimal)} t:${truncate(self.time, decimal)}`;
   };
 };
 
@@ -111,13 +136,6 @@ export const average = (array, callback) => {
   }, 0);
 
   return sum / array.length;
-};
-
-export const truncate = (number, decimal) => {
-  const value =
-    Math.floor(number * Math.pow(10, decimal)) / Math.pow(10, decimal);
-
-  return value;
 };
 
 export const round = function (number, order) {
