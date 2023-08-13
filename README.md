@@ -1,20 +1,20 @@
 # Accelerometer
 
-This package translates the acceleromter data from your device into velocity and position data so that objects in the DOM can be manipulated accoringly.
+This package takes acceleromter data from your device, calculates position, and applies it to a DOM element.
 Applications inlcude gaming, user interface controls, and more.
 
 # Usage
 
-This package is an engine that numerically integrates the velocity and position, in real time, from the raw accelerometer data from the device.
+It numerically integrates the velocity and position, in real time, from the accelerometer data from the device.
 
 `npm install @methodswithclass/accelerometer`
 
-`import Accelerometer, { ValidStates } from @methodswithclass/accelerometer`
+`import Accelerometer, { ValidStatus } from @methodswithclass/accelerometer`
 
-these values are returned from accel.validate()
+one of these values is returned in a promise from accel.validate()
 
 ```
-ValidStates = {
+ValidStatus = {
 	valid: 'valid',
 	invalid: 'invalid',
 	unchecked: 'unchecked',
