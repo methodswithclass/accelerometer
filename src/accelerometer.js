@@ -88,6 +88,9 @@ const Accelerometer = function (props = {}) {
   let factor = globalFactor;
   let threshold = factor * factor;
   let isValid = ValidStatus.unchecked;
+  const aTrun = 6;
+  const vTrun = 3;
+  const pTrun = 3;
   const object = new Thing({ id: `object-${id}`, arena, object: objectId });
 
   const init = (_self) => {
@@ -185,8 +188,8 @@ const Accelerometer = function (props = {}) {
     const wallStatus = object?.hasHitWall(pos1);
 
     if (wallStatus?.x) {
-      pos1.set({ x: wallStatus.xmax });
-      vel1.set({ x: -damp * vel1.x });
+      pos1.set({ x: wallStatus.xmax }).truncate(pTrun);
+      vel1.set({ x: -damp * vel1.x }).truncate(vTrun);
       if (
         (Math.abs(vel1.x) < minVel / Math.sqrt(2) && gravity) ||
         !doesBounce
@@ -196,8 +199,8 @@ const Accelerometer = function (props = {}) {
     }
 
     if (wallStatus?.y) {
-      pos1.set({ y: wallStatus.ymax });
-      vel1.set({ y: -damp * vel1.y });
+      pos1.set({ y: wallStatus.ymax }).truncate(pTrun);
+      vel1.set({ y: -damp * vel1.y }).truncate(vTrun);
       if (
         (Math.abs(vel1.y) < minVel / Math.sqrt(2) && gravity) ||
         !doesBounce
@@ -209,7 +212,7 @@ const Accelerometer = function (props = {}) {
 
   const friction = () => {
     if (accel1.len() < threshold) {
-      vel1.set(vel1.multiply(1 - mu));
+      vel1.set(vel1.multiply(1 - mu)).truncate(vTrun);
     }
   };
 
@@ -224,17 +227,21 @@ const Accelerometer = function (props = {}) {
       accel1.set(new Vector());
     }
 
+    accel1.truncate(aTrun);
+
     const timeInterval = current - previousTime;
 
     vel1.set(
       vel0
         .add(accel0.multiply(timeInterval))
         .add(accel1.subtract(accel0).multiply(0.5 * timeInterval))
+        .truncate(vTrun)
     );
     pos1.set(
       pos0
         .add(vel0.multiply(timeInterval))
         .add(vel1.subtract(vel0).multiply(0.5 * timeInterval))
+        .truncate(pTrun)
     );
 
     bounce();
