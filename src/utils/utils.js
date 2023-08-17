@@ -7,8 +7,12 @@ export const truncate = (number, decimal) => {
     return number;
   }
 
-  if (decimal === 0) {
+  if (decimal <= 0) {
     return Math.floor(number);
+  }
+
+  if (Math.abs(number) < Math.pow(10, -1 * (decimal - 1))) {
+    return number;
   }
   const stringValue = `${number}`;
   const [integer, fraction = '0'] = stringValue.split('.');
@@ -57,7 +61,7 @@ export const Vector = function (props = {}) {
     if (self.len() > 0) {
       return self.multiply(1 / self.len());
     } else {
-      return new Vector(0, 0, 0);
+      return new Vector();
     }
   };
 
@@ -65,6 +69,13 @@ export const Vector = function (props = {}) {
     self.x = isNumber(vector?.x) ? vector.x : self.x;
     self.y = isNumber(vector?.y) ? vector.y : self.y;
     self.time = isNumber(vector?.time) ? vector.time : self.time;
+    return self;
+  };
+
+  self.truncate = (decimal) => {
+    self.x = truncate(self.x, decimal);
+    self.y = truncate(self.y, decimal);
+    return self;
   };
 
   self.new = () => {
