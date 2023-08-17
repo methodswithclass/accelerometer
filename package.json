@@ -1,6 +1,6 @@
 {
   "name": "@methodswithclass/accelerometer",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "description": "An engine that reads the accelerometer data from the device, calculates position, and applies it to a DOM element.",
   "main": "dist/main.js",
   "files": [
