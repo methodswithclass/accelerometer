@@ -1,43 +1,110 @@
 import Thing from './thing';
 import { Vector, averageVector, delay } from './utils/utils';
 
+const MustPromptException = 'MustPrompt';
+const UserDeniedException = 'UserDenied';
+const DeviceNotSupportedException = 'DeviceNotSupported';
+const DeviceNotRespondingException = 'DeviceNotResponding';
+
 export const ValidStatus = {
   valid: 'valid',
   invalid: 'invalid',
   unchecked: 'unchecked',
+  denied: 'denied',
+  unresponsive: 'unresponsive',
 };
 
 const valid = {};
+const callback = {};
 
 const testAccel = (id) => (e) => {
   valid[id] = !Number.isNaN(e.acceleration.x);
 };
 
-const requestDeviceMotion = async (id) => {
-  await delay(1000);
-  if (!valid[id]) {
-    throw new Error('DeviceMotion is not supported.');
-  } else if (typeof DeviceMotionEvent.requestPermission === 'function') {
-    console.log('request permission');
-    const result = await DeviceMotionEvent.requestPermission();
-    if (!result || result !== 'granted') {
-      throw new Error('Permission denied by user');
-    }
-  } else {
-    // no need for permission
-    console.log('no need for permission');
+const testAttach = async (id) => {
+  if (!callback[id]) {
+    callback[id] = testAccel(id);
+    window.addEventListener('devicemotion', callback[id]);
   }
+
+  await delay(1000);
+};
+
+const testUnattach = (id) => {
+  window.removeEventListener('devicemotion', callback[id]);
+};
+
+const requestDeviceMotion = async (id) => {
+  if (typeof DeviceMotionEvent !== 'function') {
+    throw {
+      code: DeviceNotSupportedException,
+      message: 'DeviceMotion is not suppored',
+    };
+  }
+
+  if (typeof DeviceMotionEvent.requestPermission === 'function') {
+    console.log('request permission');
+    const result = await DeviceMotionEvent.requestPermission().catch(
+      (error) => {
+        console.log('debug error when requesting', error.message);
+        throw { code: MustPromptException, message: 'User must prompt' };
+      }
+    );
+
+    if (!result || result !== 'granted') {
+      throw { code: UserDeniedException, message: 'Permission denied by user' };
+    }
+
+    if (result === 'granted') {
+      await testAttach(id);
+
+      if (!valid[id]) {
+        throw {
+          code: DeviceNotRespondingException,
+          message: 'DeviceMotion is not responding.',
+        };
+      }
+
+      testUnattach(id);
+
+      return;
+    }
+  }
+
+  await testAttach(id);
+
+  if (!valid[id]) {
+    throw {
+      code: DeviceNotSupportedException,
+      message: 'DeviceMotion is not suppored',
+    };
+  }
+
+  testUnattach(id);
+  // no need for permission
+  console.log('no need for permission');
+};
+
+const handleError = (error) => {
+  if (error.code === UserDeniedException) {
+    return ValidStatus.denied;
+  } else if (error.code === MustPromptException) {
+    return ValidStatus.unchecked;
+  }
+  return ValidStatus.invalid;
 };
 
 const check = async ({ id, overrideValidate }) => {
-  window.ondevicemotion = testAccel(id);
+  if (overrideValidate) {
+    return ValidStatus.valid;
+  }
 
   try {
     await requestDeviceMotion(id);
     return ValidStatus.valid;
   } catch (error) {
     console.log('error getting device motion', id, error.message);
-    return overrideValidate ? ValidStatus.valid : ValidStatus.invalid;
+    return handleError(error);
   }
 };
 
@@ -133,14 +200,14 @@ const Accelerometer = function (props = {}) {
   };
 
   const attach = () => {
-    window.ondevicemotion = motion;
+    window.addEventListener('devicemotion', motion);
 
     window.addEventListener(`accel${id}`, handleEvent);
   };
 
   const unattach = () => {
-    window.ondevicemotion = null;
     window.removeEventListener(`accel${id}`, handleEvent);
+    window.removeEventListener('devicemotion', motion);
   };
 
   const updateMotion = (pos, vel, accel) => {
@@ -347,7 +414,6 @@ const Accelerometer = function (props = {}) {
   };
 
   init(self);
-  self.validate();
 };
 
 const accelMap = {};

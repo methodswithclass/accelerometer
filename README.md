@@ -3,6 +3,10 @@
 This package takes acceleromter data from your device, calculates position, and applies it to a DOM element.
 Applications inlcude gaming, user interface controls, and more.
 
+# Change log
+
+Version 3.3.0: request device motion permission bug fix
+
 # Usage
 
 It numerically integrates the velocity and position, in real time, from the accelerometer data from the device.
@@ -18,6 +22,8 @@ ValidStatus = {
 	valid: 'valid',
 	invalid: 'invalid',
 	unchecked: 'unchecked',
+	denied: 'denied',
+	unresponsive: 'unresponsive',
 }
 ```
 
@@ -51,7 +57,7 @@ const accel = Accelerometer({
 
 accel.calibrate({ xDir, yDir, factor}); // this is run by default
 
-accel.validate(); // returns a promise with the device validation status, requests permission if necessary, this is run by default
+accel.validate(); // returns a promise with the device validation status, requests permission if necessary (must prompt with a button to request permission)
 
 accel.start(); //start updating position of DOM element based on accelerometer data
 
