@@ -1,17 +1,17 @@
-import Thing from './thing';
-import { Vector, averageVector, delay } from './utils/utils';
+import Thing from "./thing";
+import { Vector, averageVector, delay } from "./utils/utils";
 
-const MustPromptException = 'MustPrompt';
-const UserDeniedException = 'UserDenied';
-const DeviceNotSupportedException = 'DeviceNotSupported';
-const DeviceNotRespondingException = 'DeviceNotResponding';
+const MustPromptException = "MustPrompt";
+const UserDeniedException = "UserDenied";
+const DeviceNotSupportedException = "DeviceNotSupported";
+const DeviceNotRespondingException = "DeviceNotResponding";
 
 export const ValidStatus = {
-  valid: 'valid',
-  invalid: 'invalid',
-  unchecked: 'unchecked',
-  denied: 'denied',
-  unresponsive: 'unresponsive',
+  valid: "valid",
+  invalid: "invalid",
+  unchecked: "unchecked",
+  denied: "denied",
+  unresponsive: "unresponsive",
 };
 
 const valid = {};
@@ -24,44 +24,44 @@ const testAccel = (id) => (e) => {
 const testAttach = async (id) => {
   if (!callback[id]) {
     callback[id] = testAccel(id);
-    window.addEventListener('devicemotion', callback[id]);
+    window.addEventListener("devicemotion", callback[id]);
   }
 
   await delay(1000);
 };
 
 const testUnattach = (id) => {
-  window.removeEventListener('devicemotion', callback[id]);
+  window.removeEventListener("devicemotion", callback[id]);
 };
 
 const requestDeviceMotion = async (id) => {
-  if (typeof DeviceMotionEvent !== 'function') {
+  if (typeof DeviceMotionEvent !== "function") {
     throw {
       code: DeviceNotSupportedException,
-      message: 'DeviceMotion is not suppored',
+      message: "DeviceMotion is not suppored",
     };
   }
 
-  if (typeof DeviceMotionEvent.requestPermission === 'function') {
-    console.log('request permission');
+  if (typeof DeviceMotionEvent.requestPermission === "function") {
+    console.log("request permission");
     const result = await DeviceMotionEvent.requestPermission().catch(
       (error) => {
-        console.log('debug error when requesting', error.message);
-        throw { code: MustPromptException, message: 'User must prompt' };
+        console.log("debug error when requesting", error.message);
+        throw { code: MustPromptException, message: "User must prompt" };
       }
     );
 
-    if (!result || result !== 'granted') {
-      throw { code: UserDeniedException, message: 'Permission denied by user' };
+    if (!result || result !== "granted") {
+      throw { code: UserDeniedException, message: "Permission denied by user" };
     }
 
-    if (result === 'granted') {
+    if (result === "granted") {
       await testAttach(id);
 
       if (!valid[id]) {
         throw {
           code: DeviceNotRespondingException,
-          message: 'DeviceMotion is not responding.',
+          message: "DeviceMotion is not responding.",
         };
       }
 
@@ -76,13 +76,13 @@ const requestDeviceMotion = async (id) => {
   if (!valid[id]) {
     throw {
       code: DeviceNotSupportedException,
-      message: 'DeviceMotion is not suppored',
+      message: "DeviceMotion is not suppored",
     };
   }
 
   testUnattach(id);
   // no need for permission
-  console.log('no need for permission');
+  console.log("no need for permission");
 };
 
 const handleError = (error) => {
@@ -103,7 +103,7 @@ const check = async ({ id, overrideValidate }) => {
     await requestDeviceMotion(id);
     return ValidStatus.valid;
   } catch (error) {
-    console.log('error getting device motion', id, error.message);
+    console.log("error getting device motion", id, error.message);
     return handleError(error);
   }
 };
@@ -112,7 +112,7 @@ const Accelerometer = function (props = {}) {
   const self = this;
 
   const {
-    id = 'global',
+    id = "global",
     arena,
     object: objectId,
     overrideValidate,
@@ -200,14 +200,14 @@ const Accelerometer = function (props = {}) {
   };
 
   const attach = () => {
-    window.addEventListener('devicemotion', motion);
+    window.addEventListener("devicemotion", motion);
 
     window.addEventListener(`accel${id}`, handleEvent);
   };
 
   const unattach = () => {
     window.removeEventListener(`accel${id}`, handleEvent);
-    window.removeEventListener('devicemotion', motion);
+    window.removeEventListener("devicemotion", motion);
   };
 
   const updateMotion = (pos, vel, accel) => {
@@ -288,20 +288,26 @@ const Accelerometer = function (props = {}) {
       return;
     }
 
+    const alpha = 0.3;
+
+    const timeInterval = current - previousTime;
+
     accel1.set(averageVector(accelArray));
 
     if (accel1.len() < threshold) {
       accel1.set(new Vector());
     }
 
-    accel1.truncate(aTrun);
+    const preFilterAccel = accel1
+      .multiply(alpha)
+      .add(accel0.multiply(1 - alpha));
 
-    const timeInterval = current - previousTime;
+    accel1.truncate(aTrun);
 
     vel1.set(
       vel0
         .add(accel0.multiply(timeInterval))
-        .add(accel1.subtract(accel0).multiply(0.5 * timeInterval))
+        .add(preFilterAccel.subtract(accel0).multiply(0.5 * timeInterval))
         .truncate(vTrun)
     );
     pos1.set(
@@ -335,7 +341,7 @@ const Accelerometer = function (props = {}) {
     if (filterBucket.length === filterSize) {
       integrate(filterBucket, currentTime);
 
-      filterBucket = [];
+      filterBucket = filterBucket.filter((item, index) => index !== 0);
     }
   };
 
@@ -361,7 +367,7 @@ const Accelerometer = function (props = {}) {
   };
 
   self.start = () => {
-    console.log('start accel', id);
+    console.log("start accel", id);
 
     attach();
     this.reset();
@@ -375,7 +381,7 @@ const Accelerometer = function (props = {}) {
   };
 
   self.stop = () => {
-    console.log('stop accel', id);
+    console.log("stop accel", id);
 
     running = false;
 
@@ -390,7 +396,7 @@ const Accelerometer = function (props = {}) {
   };
 
   self.reset = () => {
-    console.log('reset accel', id);
+    console.log("reset accel", id);
 
     filterBucket = [];
     timeoutBucket = [];
